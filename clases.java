@@ -1,3 +1,4 @@
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -59,8 +60,48 @@ public class Reserva {
 
     // Getters y setters
 
-    // Otros métodos relacionados con la reserva
+    // Método para guardar una reserva en un archivo
+    public void guardarReserva(String fileName) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            oos.writeObject(this);
+            System.out.println("Reserva guardada exitosamente en " + fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Método estático para cargar una reserva desde un archivo
+    public static Reserva cargarReserva(String fileName) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
+            Reserva reserva = (Reserva) ois.readObject();
+            System.out.println("Reserva cargada exitosamente desde " + fileName);
+            return reserva;
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
+
+public class Validacion {
+    public static boolean validarTipoEspacio(String tipoEspacio) {
+        // Lógica de validación para el tipo de espacio
+        return true; // Devuelve true si es válido, false si no lo es
+    }
+
+    public static boolean validarFechas(Date fechaInicio, Date fechaFinalizacion) {
+        // Lógica de validación para las fechas
+        return true; // Devuelve true si son válidas, false si no lo son
+    }
+
+    public static boolean validarRecursosAdicionales(ArrayList<String> recursosAdicionales) {
+        // Lógica de validación para los recursos adicionales
+        return true; // Devuelve true si son válidos, false si no lo son
+    }
+
+    // Otros métodos de validación
+}
+
 
 // Clase AplicacionReservas
 public class AplicacionReservas {
@@ -83,6 +124,7 @@ public class AplicacionReservas {
         return false;
     }
 
+    
     // Métodos para seleccionar el tipo de espacio, capturar información detallada de la reserva y confirmar la reserva
     public void seleccionarTipoEspacio(String tipoEspacioSeleccionado) {
         // Lógica de selección del tipo de espacio
@@ -116,7 +158,21 @@ public class AplicacionReservas {
         return false;
     }
 
-    // Otros métodos para la lógica de reservas
+    public boolean confirmarReserva() {
+        // Verifica que se hayan ingresado todos los detalles necesarios
+        boolean datosValidos = Validacion.validarTipoEspacio(tipoEspacioSeleccionado)
+                && Validacion.validarFechas(fechaInicio, fechaFinalizacion)
+                && Validacion.validarRecursosAdicionales(recursosAdicionales);
+
+        if (datosValidos) {
+            // Lógica para confirmar la reserva
+            return true;
+        } else {
+            // Muestra un mensaje de error y no confirma la reserva
+            mostrarNotificacion("Los datos ingresados no son válidos");
+            return false;
+        }
+    }
 }
 
 // Clase InterfazUsuario
